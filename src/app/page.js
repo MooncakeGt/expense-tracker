@@ -153,7 +153,7 @@ const ExpenseTracker = () => {
                 </div>
 
                     <button
-                        className="btn btn-danger"
+                        className="btn btn-danger pb-3"
                         onClick={clearExpenses}
                     >
                         Clear All
