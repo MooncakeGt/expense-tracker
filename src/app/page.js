@@ -153,13 +153,13 @@ const ExpenseTracker = () => {
                 </div>
 
                     <button
-                        className="btn btn-danger pb-3"
+                        className="btn btn-danger"
                         onClick={clearExpenses}
                     >
                         Clear All
                     </button>
 
-                <div className="mb-3">
+                <div className="mb-3 pt-3">
                     <select
                         className="form-select"
                         value={sortBy}
