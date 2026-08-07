@@ -87,6 +87,17 @@ const ExpenseTracker = () => {
         );
     };
 
+    const clearExpenses = () => {
+        if (expenses.length === 0) {
+            alert("There are no transactions to clear.");
+            return;
+        }
+
+        if (window.confirm(`Delete all ${expenses.length} transactions?`)) {
+            setExpenses([]);
+        }
+    };
+
     useEffect(() => {
 
         const saved = localStorage.getItem("expenses");
@@ -140,6 +151,13 @@ const ExpenseTracker = () => {
                     <ExportCSV expenses={sortedExpenses} />
                     <ImportCSV setExpenses={setExpenses} />
                 </div>
+
+                    <button
+                        className="btn btn-danger"
+                        onClick={clearExpenses}
+                    >
+                        Clear All
+                    </button>
 
                 <div className="mb-3">
                     <select
