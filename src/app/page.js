@@ -9,9 +9,6 @@ import ImportCSV from './components/ImportCSV';
 
 const ExpenseTracker = () => {
 
-    // =========================
-    // States
-    // =========================
     const [expenses, setExpenses] = useState([]);
 
     const [description, setDescription] = useState("");
@@ -20,9 +17,6 @@ const ExpenseTracker = () => {
     const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
 	const [sortBy, setSortBy] = useState("newest");
 
-    // =========================
-    // Calculated Values
-    // =========================
     const totalIncome = expenses
         .filter(expense => expense.type === "income")
         .reduce((sum, expense) => sum + expense.amount, 0);
@@ -35,41 +29,38 @@ const ExpenseTracker = () => {
 
 	const sortedExpenses = [...expenses];
 
-switch (sortBy) {
+    switch (sortBy) {
 
-	case "none":
+        case "none":
 
-    case "newest":
-        sortedExpenses.sort(
-            (a, b) => new Date(b.date) - new Date(a.date)
-        );
-        break;
+        case "newest":
+            sortedExpenses.sort(
+                (a, b) => new Date(b.date) - new Date(a.date)
+            );
+            break;
 
-    case "oldest":
-        sortedExpenses.sort(
-            (a, b) => new Date(a.date) - new Date(b.date)
-        );
-        break;
+        case "oldest":
+            sortedExpenses.sort(
+                (a, b) => new Date(a.date) - new Date(b.date)
+            );
+            break;
 
-    case "highest":
-        sortedExpenses.sort(
-            (a, b) => b.amount - a.amount
-        );
-        break;
+        case "highest":
+            sortedExpenses.sort(
+                (a, b) => b.amount - a.amount
+            );
+            break;
 
-    case "lowest":
-        sortedExpenses.sort(
-            (a, b) => a.amount - b.amount
-        );
-        break;
+        case "lowest":
+            sortedExpenses.sort(
+                (a, b) => a.amount - b.amount
+            );
+            break;
 
-    default:
-        break;
-}
+        default:
+            break;
+    }
 
-    // =========================
-    // Add Transaction
-    // =========================
     const addExpense = () => {
 
         if (!description.trim() || !amount.trim()) return;
@@ -90,18 +81,12 @@ switch (sortBy) {
         setDate(new Date().toLocaleDateString());
     };
 
-    // =========================
-    // Remove Transaction
-    // =========================
     const removeExpense = (id) => {
         setExpenses(prev =>
             prev.filter(expense => expense.id !== id)
         );
     };
 
-    // =========================
-    // Load Local Storage
-    // =========================
     useEffect(() => {
 
         const saved = localStorage.getItem("expenses");
@@ -112,9 +97,6 @@ switch (sortBy) {
 
     }, []);
 
-    // =========================
-    // Save Local Storage
-    // =========================
     useEffect(() => {
 
         localStorage.setItem(
@@ -135,43 +117,43 @@ switch (sortBy) {
                 </h1>
 
                         <AddTransaction
-            description={description}
-            setDescription={setDescription}
+                        description={description}
+                        setDescription={setDescription}
 
-            amount={amount}
-            setAmount={setAmount}
+                        amount={amount}
+                        setAmount={setAmount}
 
-            date={date}
-            setDate={setDate}
+                        date={date}
+                        setDate={setDate}
 
-            type={type}
-            setType={setType}
+                        type={type}
+                        setType={setType}
 
-            balance={balance}
-            totalIncome={totalIncome}
-            totalExpense={totalExpense}
+                        balance={balance}
+                        totalIncome={totalIncome}
+                        totalExpense={totalExpense}
 
-            addExpense={addExpense}
-        />
+                        addExpense={addExpense}
+                        />
 
                 <div className="my-4 gap-3">
                     <ExportCSV expenses={sortedExpenses} />
                     <ImportCSV setExpenses={setExpenses} />
                 </div>
 
-<div className="mb-3">
-    <select
-        className="form-select"
-        value={sortBy}
-        onChange={(e) => setSortBy(e.target.value)}
-    >
-		<option value="none">No Sorting</option>
-        <option value="newest">Newest First</option>
-        <option value="oldest">Oldest First</option>
-        <option value="highest">Highest Amount</option>
-        <option value="lowest">Lowest Amount</option>
-    </select>
-</div>
+                <div className="mb-3">
+                    <select
+                        className="form-select"
+                        value={sortBy}
+                        onChange={(e) => setSortBy(e.target.value)}
+                    >
+                        <option value="none">No Sorting</option>
+                        <option value="newest">Newest First</option>
+                        <option value="oldest">Oldest First</option>
+                        <option value="highest">Highest Amount</option>
+                        <option value="lowest">Lowest Amount</option>
+                    </select>
+                </div>
 
                 <TransactionList
                     expenses={sortedExpenses}
