@@ -2,8 +2,8 @@
 
 import React, { useState, useEffect } from 'react';
 
-import AddTransaction from './Components/AddTransaction';
-import TransactionList from './Components/TransactionList';
+import AddTransaction from './components/AddTransaction';
+import TransactionList from './components/TransactionList';
 import ExportCSV from './components/ExportCSV';
 import ImportCSV from './components/ImportCSV';
 
