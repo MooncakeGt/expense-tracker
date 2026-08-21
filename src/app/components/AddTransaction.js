@@ -160,6 +160,8 @@ const AddTransaction = ({
                         <option value="Transport">Transport</option>
                         <option value="Bills">Bills</option>
                         <option value="Rent">Rent</option>
+                        <option value="Shopping">Shopping</option>
+                        <option value="TouchGrass">TouchGrass</option>
                         <option value="Salary">Salary</option>
                         <option value="Other">Other</option>
                     </select>

@@ -164,40 +164,40 @@ const ExpenseTracker = () => {
                         addExpense={addExpense}
                         />
 
-<div className="row g-3 my-4 align-items-end">
+                    <div className="row g-3 my-4 align-items-end">
 
-    <div className="col-md-3">
-        <ExportCSV expenses={sortedExpenses} />
-    </div>
+                        <div className="col-md-3">
+                            <ExportCSV expenses={sortedExpenses} />
+                        </div>
 
-    <div className="col-md-3">
-        <ImportCSV setExpenses={setExpenses} />
-    </div>
+                        <div className="col-md-3">
+                            <ImportCSV setExpenses={setExpenses} />
+                        </div>
 
-    <div className="col-md-3">
-        <button
-            className="btn btn-danger w-100"
-            onClick={clearExpenses}
-        >
-            Clear All
-        </button>
-    </div>
+                        <div className="col-md-3">
+                            <button
+                                className="btn btn-danger w-100"
+                                onClick={clearExpenses}
+                            >
+                                Clear All
+                            </button>
+                        </div>
 
-    <div className="col-md-3">
-        <select
-            className="form-select"
-            value={sortBy}
-            onChange={(e) => setSortBy(e.target.value)}
-        >
-            <option value="newlyAdded">None</option>
-            <option value="newest">Newest First</option>
-            <option value="oldest">Oldest First</option>
-            <option value="highest">Highest Amount</option>
-            <option value="lowest">Lowest Amount</option>
-        </select>
-    </div>
+                        <div className="col-md-3">
+                            <select
+                                className="form-select"
+                                value={sortBy}
+                                onChange={(e) => setSortBy(e.target.value)}
+                            >
+                                <option value="newlyAdded">None</option>
+                                <option value="newest">Newest First</option>
+                                <option value="oldest">Oldest First</option>
+                                <option value="highest">Highest Amount</option>
+                                <option value="lowest">Lowest Amount</option>
+                            </select>
+                        </div>
 
-</div>
+                    </div>
 
                 <TransactionList
                     expenses={sortedExpenses}
