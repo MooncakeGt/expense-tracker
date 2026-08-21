@@ -1,13 +1,23 @@
 export default function ExportCSV({ expenses }) {
 
+    const escapeField = (field) => {
+        const str = String(field ?? "");
+        return `"${str.replace(/"/g, '""')}"`;
+    };
+
     const exportCSV = () => {
 
-        const headers =
-            "Description,Tag,Amount,Type,Date\n";
+        const headers = "Description,Tag,Amount,Type,Date\n";
 
         const rows = expenses
             .map(expense =>
-                `${expense.description},${expense.tag || ""},${expense.amount},${expense.type},${expense.date}`
+                [
+                    escapeField(expense.description),
+                    escapeField(expense.tag),
+                    escapeField(expense.amount),
+                    escapeField(expense.type),
+                    escapeField(expense.date),
+                ].join(",")
             )
             .join("\n");
 
