@@ -3,11 +3,11 @@ export default function ExportCSV({ expenses }) {
     const exportCSV = () => {
 
         const headers =
-            "Description,Amount,Type,Date\n";
+            "Description,Tag,Amount,Type,Date\n";
 
         const rows = expenses
             .map(expense =>
-                `${expense.description},${expense.amount},${expense.type},${expense.date}`
+                `${expense.description},${expense.tag || ""},${expense.amount},${expense.type},${expense.date}`
             )
             .join("\n");
 
@@ -31,7 +31,7 @@ export default function ExportCSV({ expenses }) {
 
     return (
         <button
-            className="btn btn-success my-3"
+            className="btn btn-success w-100"
             onClick={exportCSV}
         >
             Export CSV

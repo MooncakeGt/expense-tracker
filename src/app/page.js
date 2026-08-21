@@ -12,10 +12,11 @@ const ExpenseTracker = () => {
     const [expenses, setExpenses] = useState([]);
 
     const [description, setDescription] = useState("");
+    const [tag, setTag] = useState("");
     const [amount, setAmount] = useState("");
     const [type, setType] = useState("expense");
     const [date, setDate] = useState(new Date().toISOString().split("T")[0]);
-	const [sortBy, setSortBy] = useState("newest");
+	const [sortBy, setSortBy] = useState("newlyAdded");
 
     const totalIncome = expenses
         .filter(expense => expense.type === "income")
@@ -30,8 +31,8 @@ const ExpenseTracker = () => {
 	const sortedExpenses = [...expenses];
 
     switch (sortBy) {
-
-        case "none":
+        case "newlyAdded":
+            break;
 
         case "newest":
             sortedExpenses.sort(
@@ -65,20 +66,24 @@ const ExpenseTracker = () => {
 
         if (!description.trim() || !amount.trim()) return;
 
+        const today = new Date().toISOString().split("T")[0];
+
         const newExpense = {
             id: crypto.randomUUID(),
             description,
+            tag,
             amount: Number(amount),
             type,
-            date,
+            date: date || today,
         };
 
         setExpenses(prev => [...prev, newExpense]);
 
         setDescription("");
+        setTag("");
         setAmount("");
         setType("expense");
-        setDate(new Date().toLocaleDateString());
+        setDate(today);
     };
 
     const removeExpense = (id) => {
@@ -103,7 +108,15 @@ const ExpenseTracker = () => {
         const saved = localStorage.getItem("expenses");
 
         if (saved) {
-            setExpenses(JSON.parse(saved));
+            const parsed = JSON.parse(saved);
+
+            const migrated = parsed.map(expense => ({
+                ...expense,
+                tag: expense.tag || "Other",
+                date: new Date(expense.date).toISOString().split("T")[0],
+            }));
+
+            setExpenses(migrated);
         }
 
     }, []);
@@ -131,6 +144,9 @@ const ExpenseTracker = () => {
                         description={description}
                         setDescription={setDescription}
 
+                        tag={tag}
+                        setTag={setTag}
+
                         amount={amount}
                         setAmount={setAmount}
 
@@ -143,35 +159,45 @@ const ExpenseTracker = () => {
                         balance={balance}
                         totalIncome={totalIncome}
                         totalExpense={totalExpense}
+                        expenses={sortedExpenses}
 
                         addExpense={addExpense}
                         />
 
-                <div className="my-4 gap-3">
-                    <ExportCSV expenses={sortedExpenses} />
-                    <ImportCSV setExpenses={setExpenses} />
-                </div>
+<div className="row g-3 my-4 align-items-end">
 
-                    <button
-                        className="btn btn-danger"
-                        onClick={clearExpenses}
-                    >
-                        Clear All
-                    </button>
+    <div className="col-md-3">
+        <ExportCSV expenses={sortedExpenses} />
+    </div>
 
-                <div className="mb-3 pt-3">
-                    <select
-                        className="form-select"
-                        value={sortBy}
-                        onChange={(e) => setSortBy(e.target.value)}
-                    >
-                        <option value="none">No Sorting</option>
-                        <option value="newest">Newest First</option>
-                        <option value="oldest">Oldest First</option>
-                        <option value="highest">Highest Amount</option>
-                        <option value="lowest">Lowest Amount</option>
-                    </select>
-                </div>
+    <div className="col-md-3">
+        <ImportCSV setExpenses={setExpenses} />
+    </div>
+
+    <div className="col-md-3">
+        <button
+            className="btn btn-danger w-100"
+            onClick={clearExpenses}
+        >
+            Clear All
+        </button>
+    </div>
+
+    <div className="col-md-3">
+        <select
+            className="form-select"
+            value={sortBy}
+            onChange={(e) => setSortBy(e.target.value)}
+        >
+            <option value="newlyAdded">None</option>
+            <option value="newest">Newest First</option>
+            <option value="oldest">Oldest First</option>
+            <option value="highest">Highest Amount</option>
+            <option value="lowest">Lowest Amount</option>
+        </select>
+    </div>
+
+</div>
 
                 <TransactionList
                     expenses={sortedExpenses}

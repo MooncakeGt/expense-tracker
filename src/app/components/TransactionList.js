@@ -7,23 +7,30 @@ const TransactionList = ({ expenses, removeExpense }) => {
 		<div>
 			<ul className="list-group mt-3">
 				{expenses.map(expense => (
-					<li key={expense.id}
-						className={`list-group-item d-flex
-									justify-content-between
-									align-items-center
-									${expense.type === 'expense' ?
-									'text-danger' : 'text-success'}`}>
-						<div>
-							<h4>{expense.description} - {formatCurrency(expense.amount)}</h4>
-							<small className="text-muted">{expense.date}</small>
-						</div>
-						<div>
-							<button className="btn btn-danger"
-									onClick={() => removeExpense(expense.id)}>
-								Remove
-							</button>
-						</div>
-					</li>
+				<li key={expense.id}
+					className={`list-group-item d-flex
+								justify-content-between
+								align-items-center
+								${expense.type === 'expense' ?
+								'text-danger' : 'text-success'}`}>
+					<div>
+						<h4>
+							{expense.description} - {formatCurrency(expense.amount)}
+							{expense.tag && (
+								<span className="badge bg-secondary ms-2">
+									{expense.tag}
+								</span>
+							)}
+						</h4>
+						<small className="text-muted">{expense.date}</small>
+					</div>
+					<div>
+						<button className="btn btn-danger"
+								onClick={() => removeExpense(expense.id)}>
+							Remove
+						</button>
+					</div>
+				</li>
 				))}
 			</ul>
 		</div>

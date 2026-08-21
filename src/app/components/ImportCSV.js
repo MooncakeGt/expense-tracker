@@ -1,8 +1,11 @@
 'use client';
 
 import Papa from "papaparse";
+import { useRef } from "react";
 
 const ImportCSV = ({ setExpenses }) => {
+
+    const fileInputRef = useRef(null);
 
     const importCSV = (e) => {
 
@@ -19,6 +22,7 @@ const ImportCSV = ({ setExpenses }) => {
                 const importedExpenses = results.data.map(item => ({
                     id: crypto.randomUUID(),
                     description: item.Description,
+                    tag: item.Tag || "Other",
                     amount: Number(item.Amount),
                     type: item.Type,
                     date: item.Date,
@@ -32,21 +36,28 @@ const ImportCSV = ({ setExpenses }) => {
                 alert("Failed to import CSV.");
             }
         });
+
+        e.target.value = "";
     };
 
     return (
-        <div className="mt-3">
-            <label className="form-label">
+        <>
+            <button
+                type="button"
+                className="btn btn-secondary w-100"
+                onClick={() => fileInputRef.current.click()}
+            >
                 Import CSV
-            </label>
+            </button>
 
             <input
                 type="file"
                 accept=".csv"
-                className="form-control"
+                ref={fileInputRef}
                 onChange={importCSV}
+                style={{ display: "none" }}
             />
-        </div>
+        </>
     );
 };
 
