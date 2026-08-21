@@ -110,11 +110,20 @@ const ExpenseTracker = () => {
         if (saved) {
             const parsed = JSON.parse(saved);
 
-            const migrated = parsed.map(expense => ({
-                ...expense,
-                tag: expense.tag || "Other",
-                date: new Date(expense.date).toISOString().split("T")[0],
-            }));
+            const today = new Date().toISOString().split("T")[0];
+
+            const migrated = parsed.map(expense => {
+                const parsedDate = new Date(expense.date);
+                const isValidDate = !isNaN(parsedDate.getTime());
+
+                return {
+                    ...expense,
+                    tag: expense.tag || "Other",
+                    date: isValidDate
+                        ? parsedDate.toISOString().split("T")[0]
+                        : today,
+                };
+            });
 
             setExpenses(migrated);
         }
