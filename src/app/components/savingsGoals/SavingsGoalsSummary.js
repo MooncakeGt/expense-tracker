@@ -1,0 +1,4 @@
+import { formatCurrency } from "../../utils/currency";
+import { EMPTY_VALUE } from "../../utils/display";
+import { getGoalsSummary } from "../../utils/savingsGoals";
+export default function SavingsGoalsSummary({goals,contributions,onView}) { const data=getGoalsSummary(goals,contributions); return <section className="card mb-4"><div className="card-body d-flex flex-wrap justify-content-between align-items-center gap-3"><div><h3 className="h5 mb-1">Savings Goals</h3><div><strong>{formatCurrency(data.totalSaved)} / {formatCurrency(data.totalTarget)}</strong> · {data.progress===null?EMPTY_VALUE:`${data.progress.toFixed(1)}%`}</div><small className="text-muted">{data.activeCount} active goal{data.activeCount===1?"":"s"}</small></div><button type="button" className="btn btn-outline-primary" onClick={onView}>View Savings Goals</button></div></section>; }

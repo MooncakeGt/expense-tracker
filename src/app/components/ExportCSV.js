@@ -1,50 +1,19 @@
-export default function ExportCSV({ expenses }) {
+﻿import { createCsvExport, downloadCsv } from "../utils/csv";
+import { getToday } from "../utils/recurring";
 
-    const escapeField = (field) => {
-        const str = String(field ?? "");
-        return `"${str.replace(/"/g, '""')}"`;
-    };
+export default function ExportCSV({ expenses, customCategories = [], accounts = [], categoryOverrides = {}, compact = false }) {
 
     const exportCSV = () => {
-
-        const headers = "Description,Tag,Amount,Type,Date\n";
-
-        const rows = expenses
-            .map(expense =>
-                [
-                    escapeField(expense.description),
-                    escapeField(expense.tag),
-                    escapeField(expense.amount),
-                    escapeField(expense.type),
-                    escapeField(expense.date),
-                ].join(",")
-            )
-            .join("\n");
-
-        const csv = headers + rows;
-
-        const blob = new Blob([csv], {
-            type: "text/csv",
-        });
-
-        const url = URL.createObjectURL(blob);
-
-        const link = document.createElement("a");
-
-        link.href = url;
-        link.download = "expenses.csv";
-
-        link.click();
-
-        URL.revokeObjectURL(url);
+        downloadCsv(createCsvExport(expenses, customCategories, accounts, categoryOverrides), `expense-tracker-transactions-${getToday()}.csv`);
     };
 
     return (
         <button
-            className="btn btn-success w-100"
+            className={`btn btn-success${compact ? " btn-sm" : " w-100"}`}
             onClick={exportCSV}
         >
             Export CSV
         </button>
     );
 }
+

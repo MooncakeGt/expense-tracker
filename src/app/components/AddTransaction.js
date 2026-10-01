@@ -1,5 +1,9 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import { formatCurrency } from "../utils/currency";
+import { getCategoryForTag, normalizeTag } from "../utils/tags";
+import CategorySelect from "./CategorySelect";
+import AccountSelect from "./accounts/AccountSelect";
+import CategoryLabel from "./categories/CategoryIcon";
 
 const AddTransaction = ({
     description,
@@ -15,18 +19,25 @@ const AddTransaction = ({
     balance,
     totalIncome,
     totalExpense,
+    transactionCount,
     expenses,
     addExpense,
+    errors,
+    clearError,
+    customCategories = [],
+    onCreateCategory,
+    accountId, setAccountId, accounts = [],
 }) => {
     const [modalType, setModalType] = useState(null); // "income" | "expense" | null
 
     const getTagTotals = (filterType) => {
-        const totals = {};
+        const totals = Object.create(null);
 
         expenses
             .filter(expense => expense.type === filterType)
             .forEach(expense => {
-                const key = expense.tag || "Other";
+                const rawTag = normalizeTag(expense.tag);
+                const key = getCategoryForTag(rawTag, customCategories)?.id || rawTag;
                 totals[key] = (totals[key] || 0) + expense.amount;
             });
 
@@ -50,7 +61,7 @@ const AddTransaction = ({
                     </div>
                 </div>
 
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                     <div
                         className="card shadow-sm border-success text-center h-100"
                         style={{ cursor: "pointer" }}
@@ -65,7 +76,7 @@ const AddTransaction = ({
                     </div>
                 </div>
 
-                <div className="col-md-6 mb-3">
+                <div className="col-md-4 mb-3">
                     <div
                         className="card shadow-sm border-danger text-center h-100"
                         style={{ cursor: "pointer" }}
@@ -76,6 +87,15 @@ const AddTransaction = ({
                             <h3 className="text-danger">
                                 {formatCurrency(totalExpense)}
                             </h3>
+                        </div>
+                    </div>
+                </div>
+
+                <div className="col-md-4 mb-3">
+                    <div className="card shadow-sm text-center h-100">
+                        <div className="card-body">
+                            <h6 className="text-muted">Transactions</h6>
+                            <h3>{transactionCount}</h3>
                         </div>
                     </div>
                 </div>
@@ -121,7 +141,7 @@ const AddTransaction = ({
                                         <tbody>
                                             {tagTotals.map(([tagName, total]) => (
                                                 <tr key={tagName}>
-                                                    <td>{tagName}</td>
+                                                    <td><CategoryLabel tag={tagName} customCategories={customCategories} size={20} /></td>
                                                     <td className="text-end">
                                                         {formatCurrency(total)}
                                                     </td>
@@ -136,72 +156,59 @@ const AddTransaction = ({
                 </div>
             )}
 
-            {/* Description / Tag */}
-            <div className="row">
-
-                <div className="col-md-8 mb-3">
+            <div className="row g-3 mb-3">
+                <div className="col-12">
+                    <label className="form-label" htmlFor="add-description">Description</label>
                     <input
+                        id="add-description"
                         type="text"
                         className="form-control"
                         placeholder="Description"
                         value={description}
-                        onChange={(e) => setDescription(e.target.value)}
+                        onChange={(e) => { setDescription(e.target.value); clearError("description"); }}
+                        aria-invalid={Boolean(errors.description)}
                     />
+                    {errors.description && <div className="text-danger small" role="alert">{errors.description}</div>}
                 </div>
 
-                <div className="col-md-4 mb-3">
-                    <select
-                        className="form-select"
-                        value={tag}
-                        onChange={(e) => setTag(e.target.value)}
-                    >
-                        <option value="">Select Tag</option>
-                        <option value="Food">Food</option>
-                        <option value="Transport">Transport</option>
-                        <option value="Bills">Bills</option>
-                        <option value="Rent">Rent</option>
-                        <option value="Shopping">Shopping</option>
-                        <option value="TouchGrass">TouchGrass</option>
-                        <option value="Salary">Salary</option>
-                        <option value="Other">Other</option>
-                    </select>
+                <div className="col-12">
+                    <CategorySelect id="add-category" value={tag} onChange={value => { setTag(value); clearError("tag"); }} type={type}
+                        customCategories={customCategories} onCreateCategory={onCreateCategory} columns />
+                    {errors.tag && <div className="text-danger small" role="alert">{errors.tag}</div>}
                 </div>
-
-            </div>
-
-            {/* Amount / Date / Type */}
-            <div className="row">
-
-                <div className="col-md-4 mb-3">
+                <div className="col-12 col-md-6">
+                    <label className="form-label" htmlFor="add-amount">Amount (RM)</label>
                     <input
+                        id="add-amount"
                         type="number"
                         className="form-control"
                         placeholder="Amount"
                         value={amount}
-                        onChange={(e) => setAmount(e.target.value)}
+                        onChange={(e) => { setAmount(e.target.value); clearError("amount"); }}
+                        aria-invalid={Boolean(errors.amount)}
                     />
+                    {errors.amount && <div className="text-danger small" role="alert">{errors.amount}</div>}
                 </div>
 
-                <div className="col-md-4 mb-3">
+                <div className="col-12 col-md-6">
+                    <label className="form-label" htmlFor="add-type">Type</label>
+                    <select id="add-type" className="form-select" value={type} onChange={(e) => { const nextType=e.target.value; const category=getCategoryForTag(tag,customCategories); if(category&&category.type!=="both"&&category.type!==nextType)setTag(""); setType(nextType); clearError("type"); }}><option value="expense">Expense</option><option value="income">Income</option></select>
+                    {errors.type && <div className="text-danger small" role="alert">{errors.type}</div>}
+                </div>
+                <div className="col-12 col-md-6">
+                    <label className="form-label" htmlFor="add-date">Date</label>
                     <input
+                        id="add-date"
                         type="date"
                         className="form-control"
                         value={date}
-                        onChange={(e) => setDate(e.target.value)}
+                        onChange={(e) => { setDate(e.target.value); clearError("date"); }}
+                        aria-invalid={Boolean(errors.date)}
                     />
+                    {errors.date && <div className="text-danger small" role="alert">{errors.date}</div>}
                 </div>
 
-                <div className="col-md-4 mb-3">
-                    <select
-                        className="form-select"
-                        value={type}
-                        onChange={(e) => setType(e.target.value)}
-                    >
-                        <option value="expense">Expense</option>
-                        <option value="income">Income</option>
-                    </select>
-                </div>
-
+                <div className="col-12 col-md-6"><label className="form-label" htmlFor="add-account">Account</label><AccountSelect id="add-account" value={accountId} onChange={setAccountId} accounts={accounts} /></div>
             </div>
 
             {/* Button */}
